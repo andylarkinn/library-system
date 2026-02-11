@@ -1,0 +1,127 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam class {
+    BackgroundColor LightYellow
+    BorderColor Black
+    ArrowColor Black
+}
+
+title Library Management System - UML Class Diagram
+
+class Book {
+    - isbn: String
+    - title: String
+    - author: String
+    - price: double
+    - available: boolean
+    - quantity: int
+    - category: String
+    --
+    + Book(isbn: String, title: String, author: String, price: double)
+    + getIsbn(): String
+    + getTitle(): String
+    + setTitle(title: String): void
+    + getAuthor(): String
+    + setAuthor(author: String): void
+    + getPrice(): double
+    + setPrice(price: double): void
+    + isAvailable(): boolean
+    + setAvailable(available: boolean): void
+    + getQuantity(): int
+    + setQuantity(quantity: int): void
+    + getCategory(): String
+    + setCategory(category: String): void
+    + decreaseQuantity(): void
+    + increaseQuantity(): void
+    + applyDiscount(percentage: double): double
+    + equals(o: Object): boolean
+    + hashCode(): int
+    + toString(): String
+}
+
+class Member {
+    - memberId: String
+    - name: String
+    - email: String
+    - membershipDate: LocalDate
+    - borrowedBooks: List<Book>
+    - maxBooksAllowed: int
+    - active: boolean
+    --
+    + {static} DEFAULT_MAX_BOOKS: int = 5
+    --
+    + Member(memberId: String, name: String, email: String)
+    + getMemberId(): String
+    + getName(): String
+    + setName(name: String): void
+    + getEmail(): String
+    + setEmail(email: String): void
+    + getMembershipDate(): LocalDate
+    + getBorrowedBooks(): List<Book>
+    + getMaxBooksAllowed(): int
+    + setMaxBooksAllowed(max: int): void
+    + isActive(): boolean
+    + setActive(active: boolean): void
+    + canBorrow(): boolean
+    + borrowBook(book: Book): boolean
+    + hasBorrowed(book: Book): boolean
+}
+
+class Library {
+    - name: String
+    - books: List<Book>
+    - members: List<Member>
+    - activeLoans: Map<String, Loan>
+    --
+    + Library(name: String)
+    + getName(): String
+    + getBooks(): List<Book>
+    + getMembers(): List<Member>
+    + getTotalBooks(): int
+    + addBook(book: Book): boolean
+    + removeBook(isbn: String): void
+    + findBookByIsbn(isbn: String): Book
+    + addMember(member: Member): void
+    + findMemberById(memberId: String): Member
+    + lendBook(memberId: String, isbn: String): Loan
+    + getBookPrices(): double[]
+    + getBookTitles(): String[]
+}
+
+class Loan {
+    - loanId: String
+    - book: Book
+    - member: Member
+    --
+    + getLoanId(): String
+    + getBook(): Book
+    + getMember(): Member
+    + setLoanId(loanId: String): void
+    + setBook(book: Book): void
+    + setMember(member: Member): void
+}
+
+' Relationships
+Library "1" *-- "0..*" Book : contains >
+Library "1" *-- "0..*" Member : has >
+Library "1" *-- "0..*" Loan : manages >
+Loan "0..*" --> "1" Book : references >
+Loan "0..*" --> "1" Member : references >
+Member "1" o-- "0..*" Book : borrows >
+
+note right of Book
+  Uses Lombok @Getter @Setter
+  ISBN is unique identifier
+end note
+
+note right of Loan
+  Uses Lombok @Data @Builder
+  Created when book is lent
+end note
+
+note bottom of Library
+  Central class managing
+  all library operations
+end note
+@enduml
